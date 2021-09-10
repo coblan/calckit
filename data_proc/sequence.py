@@ -13,8 +13,8 @@ def lstm_sequencefy(X,time_steps):
     XXX = np.reshape(XX, (data_len - time_steps+1, time_steps, -1))
     return XXX
 
-def sequence_generator(data, lookback, delay, min_index, max_index,
-              shuffle=False, batch_size=128, step=6):
+def sequence_generator(data, lookback, delay, min_index, max_index=None,
+              shuffle=False, batch_size=128, step=1):
     """从数据data中，截取lookback长度作为样本，总共拼凑batch_size个样本
     
     shuffle = true 打乱数据，用于提取 train数据，比较均衡。
@@ -26,7 +26,7 @@ def sequence_generator(data, lookback, delay, min_index, max_index,
     delay:预测的多少(延迟后)的目标
     
     返回:
-    samples = [ [[1,1],[2,2],lookback // step 长 ]...batch_size个样本 ]
+    samples = [ [[1,1],[2,2],lookback // step 长 ]...batch_size 个样本 ]
     targets = []
     
     """
