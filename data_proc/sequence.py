@@ -49,7 +49,8 @@ def sequence_generator(data, lookback, delay, min_index, max_index=None,
         for j, row in enumerate(rows):
             indices = range(rows[j] - lookback, rows[j], step)
             samples[j] = data[indices]
-            targets[j] = data[rows[j] + delay][1]
+            #targets[j] = data[rows[j] + delay][0]
+            targets[j] = data[rows[j]:rows[j]+7].mean(0)[0]
         yield samples, targets
 
 if __name__ =='__main__':
