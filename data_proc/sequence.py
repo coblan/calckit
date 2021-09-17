@@ -45,12 +45,18 @@ def sequence_generator(data, lookback, delay, min_index, max_index=None,
         samples = np.zeros((len(rows),
                             lookback // step,
                             data.shape[-1]))
-        targets = np.zeros((len(rows),))
+        # 一维
+        #targets = np.zeros((len(rows),))
+        # 7维
+        targets = np.zeros((len(rows),7))
         for j, row in enumerate(rows):
             indices = range(rows[j] - lookback, rows[j], step)
             samples[j] = data[indices]
-            #targets[j] = data[rows[j] + delay][0]
-            targets[j] = data[rows[j]:rows[j]+7].mean(0)[0]
+            # 未来一个
+            # targets[j] = data[rows[j] + delay][0]
+            # 未来7个平均
+            # targets[j] = data[rows[j]:rows[j]+7].mean(0)[0]
+            targets[j] = data[rows[j]:rows[j]+7][:,0]
         yield samples, targets
 
 if __name__ =='__main__':
