@@ -59,6 +59,56 @@ def sequence_generator(data, lookback, delay, min_index, max_index=None,
             targets[j] = data[rows[j]:rows[j]+7][:,0]
         yield samples, targets
 
+class SequenceGenerator(object):
+    def __init__(self,data,lookback,delay,batch_size):
+        """
+        Args:
+        data:数据
+        lookback:前向影响的数据
+        delay:影响后续数据
+        """
+        self.data=data
+        self.delay = delay
+        self.lookback = lookback
+        self.batch_size=batch_size
+    
+    def shuffleGenerator(self):
+        max_index = len(self.data) - self.delay - 1
+        while 1:
+            rows = np.random.randint(
+                self.lookback, max_index, size=self.batch_size)  
+            samples = np.zeros((self.batch_size,
+                                self.lookback ,
+                                self.data.shape[-1]))  
+            
+            #targets = np.zeros((len(rows),7))
+            for j, row in enumerate(rows):
+                indices = range(rows[j] - self.lookback, rows[j], 1)
+                samples[j] = self.data[indices]
+                # 未来一个
+                # targets[j] = data[rows[j] + delay][0]
+                # 未来7个平均
+                # targets[j] = data[rows[j]:rows[j]+7].mean(0)[0]
+                #targets[j] = data[rows[j]:rows[j]+7][:,0]
+                
+            targets = self.getTarget(rows)
+            yield samples, targets
+    
+    def orderGenerator(self):
+        i = self.lookback
+    
+    def getTarget(self,rows):
+        """
+        Args:
+        rows:最后元素索引数组。[100,105],
+        """
+        targets = np.zeros((len(rows),7))
+        for j, row in enumerate(rows):
+            index = rows[j]
+            targets[j] = self.data[index:index+7][:,0]
+        return targets
+        
+
 if __name__ =='__main__':
     aa = lstm_sequencefy(np.array([1,2,3,4,5]),2)
     print(aa)
